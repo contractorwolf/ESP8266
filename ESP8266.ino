@@ -52,7 +52,7 @@ void loop()
      
      //create start command
      //String startcommand = "AT+CIPSTART=\"TCP\",\"signalvehicle.com\",80";
-     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\",80"; 
+     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\", 80"; 
      
      Serial1.println(startcommand);
      Serial.println(startcommand);
@@ -66,7 +66,7 @@ void loop()
      
      //create the request command
      //String sendcommand = "GET /index.asp HTTP/1.0\r\n\r\n";//works for most cases
-     String sendcommand = "GET " + path + " HTTP/1.0\r\n\r\n";//works for most cases
+     String sendcommand = "GET http://"+ domain + path + " HTTP/1.0\r\n\r\n\r\n";//works for most cases
      
      
      
