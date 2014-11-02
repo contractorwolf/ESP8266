@@ -16,7 +16,7 @@ void setup()
 
 void loop()
 {
-  //output everything from ESP8266 to the Serial output
+  //output everything from ESP8266 to the Arduino Micro Serial output
   while (Serial1.available() > 0) {
     Serial.write(Serial1.read());
   }
@@ -68,7 +68,6 @@ void loop()
      }
      
      //create the request command
-     //String sendcommand = "GET /index.asp HTTP/1.0\r\n\r\n";//works for most cases
      String sendcommand = "GET http://"+ domain + path + " HTTP/1.0\r\n\r\n\r\n";//works for most cases
      
      Serial.print(sendcommand);
