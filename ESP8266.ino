@@ -6,13 +6,21 @@ void setup()
   Serial1.begin(115200);
   Serial.begin(115200); 
   
-  Serial1.print("AT+RST");
-  Serial1.print("AT+CWJAP =\"Colossus\",\"arduino56\"");
+  Serial1.println("AT+RST");
+  Serial1.println("AT+CWMODE=1");
+  delay(500);
+  Serial1.println("AT+RST");
+  Serial1.println("AT+CWJAP=\"Colossus\",\"arduino56\"");
   
 }
 
 void loop()
 {
+  //output everything from ESP8266 to the Serial output
+  while (Serial1.available() > 0) {
+    Serial.write(Serial1.read());
+  }
+  
   if (Serial.available() > 0) {
 
      //read from serial until terminating character
@@ -21,10 +29,6 @@ void loop()
      //trim buffer to length of the actual message
      String message = String(serialbuffer).substring(0,len-1);
      Serial.println("message: " + message);
-     
-     
-     
-     
      
      //find the dividing marker between domain and path
      int slash = message.indexOf('/');
@@ -37,7 +41,6 @@ void loop()
        domain = message;
      }
 
-     
      //get the path
      String path;
      if(slash>0){  
@@ -52,7 +55,7 @@ void loop()
      
      //create start command
      //String startcommand = "AT+CIPSTART=\"TCP\",\"signalvehicle.com\",80";
-     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\", 80"; 
+     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\", 80"; //443 is HTTPS
      
      Serial1.println(startcommand);
      Serial.println(startcommand);
@@ -68,8 +71,6 @@ void loop()
      //String sendcommand = "GET /index.asp HTTP/1.0\r\n\r\n";//works for most cases
      String sendcommand = "GET http://"+ domain + path + " HTTP/1.0\r\n\r\n\r\n";//works for most cases
      
-     
-     
      Serial.print(sendcommand);
      
      //send 
@@ -80,7 +81,6 @@ void loop()
      Serial.println(sendcommand.length());
      
      //delay(5000);
-     
      if(Serial1.find(">"))
      {
        Serial.println(">");
@@ -96,8 +96,5 @@ void loop()
      Serial1.print(sendcommand);
   }
   
-  //output everything from ESP8266 to the Serial output
-  if (Serial1.available() > 0) {
-    Serial.write(Serial1.read());
-  }
+
 }
