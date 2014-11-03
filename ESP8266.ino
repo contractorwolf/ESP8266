@@ -1,6 +1,10 @@
 char serialbuffer[1000];//serial buffer for request url
 
 
+
+
+
+
 void setup()
 {
   Serial1.begin(115200);
@@ -10,7 +14,9 @@ void setup()
   Serial1.println("AT+CWMODE=1");
   delay(500);
   Serial1.println("AT+RST");
-  Serial1.println("AT+CWJAP=\"Colossus\",\"arduino56\"");
+  Serial1.println("AT+CWJAP=\"YOUR_WIFI_NETWORK\",\"YOUR_WIFI_PASSWORD\"");
+
+  
   
 }
 
@@ -30,21 +36,48 @@ void loop()
      String message = String(serialbuffer).substring(0,len-1);
      Serial.println("message: " + message);
      
-     //find the dividing marker between domain and path
-     int slash = message.indexOf('/');
+     
+     
+     if(message.substring(0,2)=="AT"){
+       //make command request
+       Serial.println("COMMAND REQUEST");
+       Serial1.println(message); 
+     }else{
+      //make webrequest
+       Serial.println("WEB REQUEST");
+       WebRequest(message);
+     }
+     
+     
+     
+     
+
+     
+     
+  }
+  
+
+}
+
+
+
+
+void WebRequest(String request){
+ //find the dividing marker between domain and path
+     int slash = request.indexOf('/');
      
      //grab the domain
      String domain;
      if(slash>0){  
-       domain = message.substring(0,slash);
+       domain = request.substring(0,slash);
      }else{
-       domain = message;
+       domain = request;
      }
 
      //get the path
      String path;
      if(slash>0){  
-       path = message.substring(slash);   
+       path = request.substring(slash);   
      }else{
        path = "/";          
      }
@@ -92,8 +125,7 @@ void loop()
      }
      
      //Serial.print(getcommand);
-     Serial1.print(sendcommand);
-  }
+     Serial1.print(sendcommand); 
   
-
+  
 }
