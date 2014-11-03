@@ -14,9 +14,13 @@ void setup()
   Serial1.println("AT+CWMODE=1");
   delay(500);
   Serial1.println("AT+RST");
+<<<<<<< HEAD
   Serial1.println("AT+CWJAP=\"YOUR_WIFI_NETWORK\",\"YOUR_WIFI_PASSWORD\"");
 
   
+=======
+  Serial1.println("AT+CWJAP=\"XXXXXXXXXX\",\"XXXXXXXXXX\"");
+>>>>>>> FETCH_HEAD
   
 }
 
