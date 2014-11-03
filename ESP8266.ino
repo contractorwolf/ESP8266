@@ -1,24 +1,19 @@
 char serialbuffer[1000];//serial buffer for request url
 
-
-
-
-
-
 void setup()
 {
-  Serial1.begin(115200);
-  Serial.begin(115200); 
+  Serial1.begin(115200);//connection to ESP8266
+  Serial.begin(115200); //serial debug
   
+  
+  //set mode needed for new boards
   Serial1.println("AT+RST");
   Serial1.println("AT+CWMODE=1");
-  delay(500);
+  delay(500);//delay after mode change
   Serial1.println("AT+RST");
-
-  Serial1.println("AT+CWJAP=\"YOUR_WIFI_NETWORK\",\"YOUR_WIFI_PASSWORD\"");
-
-
   
+  //connect to wifi network
+  Serial1.println("AT+CWJAP=\"YOUR_WIFI_NETWORK\",\"YOUR_WIFI_PASSWORD\"");
 }
 
 void loop()
@@ -29,16 +24,14 @@ void loop()
   }
   
   if (Serial.available() > 0) {
-
      //read from serial until terminating character
      int len = Serial.readBytesUntil('\n', serialbuffer, sizeof(serialbuffer));
   
      //trim buffer to length of the actual message
      String message = String(serialbuffer).substring(0,len-1);
      Serial.println("message: " + message);
-     
-     
-     
+ 
+     //check to see if the incoming serial message is a url or an AT command
      if(message.substring(0,2)=="AT"){
        //make command request
        Serial.println("COMMAND REQUEST");
@@ -48,21 +41,10 @@ void loop()
        Serial.println("WEB REQUEST");
        WebRequest(message);
      }
-     
-     
-     
-     
-
-     
-     
   }
-  
-
 }
 
-
-
-
+//web request needs to be sent without the http for now, https still needs some working
 void WebRequest(String request){
  //find the dividing marker between domain and path
      int slash = request.indexOf('/');
@@ -88,8 +70,7 @@ void WebRequest(String request){
      Serial.println("path: |" + path + "|");     
      
      //create start command
-     //String startcommand = "AT+CIPSTART=\"TCP\",\"signalvehicle.com\",80";
-     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\", 80"; //443 is HTTPS
+     String startcommand = "AT+CIPSTART=\"TCP\",\"" + domain + "\", 80"; //443 is HTTPS, still to do
      
      Serial1.println(startcommand);
      Serial.println(startcommand);
@@ -110,6 +91,7 @@ void WebRequest(String request){
      Serial1.print("AT+CIPSEND=");
      Serial1.println(sendcommand.length());
      
+     //debug the command
      Serial.print("AT+CIPSEND=");
      Serial.println(sendcommand.length());
      
@@ -127,6 +109,4 @@ void WebRequest(String request){
      
      //Serial.print(getcommand);
      Serial1.print(sendcommand); 
-  
-  
 }
